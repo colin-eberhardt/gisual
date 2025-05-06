@@ -1,27 +1,33 @@
 from fastapi import FastAPI, HTTPException
 
-def fake_answer_to_everthing_ml_module(x: float):
-    return x*42
+import api.utils.stations as stations
+from api.utils.transform import extract_kml_file, kml_to_dict
+from api.utils.distance_calc import haversine_distance
 
-ml_models = {}
-
-# Startup command example
+# Create the stations dictionary once at startup
 async def lifespan(app: FastAPI):
-    # Load module
-    ml_models['answer_to_everything'] =fake_answer_to_everthing_ml_module
+    # Get KML out of KMZ
+    global stations
+    kml_path = extract_kml_file("./data/stations.kmz")
+    stations.SEPTA_STATIONS = kml_to_dict(kml_path) 
     yield
 
     # Clean up
-    ml_models.clear()
+    # ml_models.clear()
 
 app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"stations": stations.SEPTA_STATIONS}
 
-@app.get("/predict")
-async def predict(x: float):
-    result = ml_models["answer_to_everything"](x)
-    return {"result": result}
+@app.get('/closest/')
+def get_closest_station(coords: str):
+
+    # Parse the coords
+    request_key = coords.replace(" ", "")
+    lat, long = coords.split(",")
+    # Find the haversine dist
+    haversine_distance((float(lat),float(long)))
+    # Return geojson
 

@@ -1,5 +1,5 @@
 services:
-  server:
+  api:
     build: ./api
     ports:
       - "8000:8000"
