@@ -4,7 +4,7 @@ import geojson
 
 import app.utils.stations as stations
 
-# EARTH_CIR = 6371000
+EARTH_CIR = 6371000
 
 def haversine_distance(point: tuple):
     """
@@ -26,7 +26,7 @@ def haversine_distance(point: tuple):
         delta_long = station_long_rad - point_long_rad
 
         hav_dist = math.sin(delta_lat/2)**2 + math.cos(point_lat_rad) * math.cos(station_lat_rad) * math.sin(delta_long/2)**2
-        dist = 2 * 6371000 * math.asin(math.sqrt(hav_dist))
+        dist = 2 * EARTH_CIR * math.asin(math.sqrt(hav_dist))
 
         if dist < min_dist:
             min_dist = dist
