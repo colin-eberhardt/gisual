@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 from typing import Annotated
 
@@ -49,6 +50,7 @@ async def find_closest_station(coords: Annotated[str, Query(description="Comma-s
         )
 
     # Create a cache key and lock key
+    pid = os.getpid()
     cache_key = create_key(lat, long)
     lock_key = f"lock:{cache_key}"
 
@@ -62,7 +64,7 @@ async def find_closest_station(coords: Annotated[str, Query(description="Comma-s
                 "data": cached_response,
                 "detail": "Returned from cache."
             },
-            headers={"X-Cache": "HIT"}
+            headers={"X-Cache": "HIT", "pid": str(pid)}
         )
 
     # Acquire and use lock
@@ -86,7 +88,7 @@ async def find_closest_station(coords: Annotated[str, Query(description="Comma-s
                 "data": closest_station,
                 "detail": "Success"
             },
-            headers={"X-Cache": "MISS"}
+            headers={"X-Cache": "MISS",  "pid": str(pid)}
         )
     finally:
         await lock.release()
