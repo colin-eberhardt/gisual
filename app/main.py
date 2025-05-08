@@ -2,8 +2,9 @@ import os
 from contextlib import asynccontextmanager
 from typing import Annotated
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request, status
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 
 import app.utils.stations as stations
 from app.services.redis_conn import redis_conn
@@ -11,6 +12,7 @@ from app.utils.transform import extract_kml_file, convert_kml
 from app.utils.distance_calc import haversine_distance
 from app.utils.cache_utils import get_cached_response, update_cache, create_key
 from app.utils.helpers import validate_coords
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -33,8 +35,17 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, err: RequestValidationError):
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={
+            "detail": err.errors()
+        }
+    )
+
 @app.get('/station/')
-async def find_closest_station(coords: Annotated[str, Query(description="Comma-separated string in form 'latitude, longitude'")]):
+async def find_closest_station(coords: Annotated[str, Query(description="Comma-separated string in form 'latitude, longitude'", max_length=50)]):
     """
         Find the closest SEPTA station to provided latitude and longitude by calculating the Haversine distance between 'coords' and the station coordinates.
     """
@@ -45,7 +56,7 @@ async def find_closest_station(coords: Annotated[str, Query(description="Comma-s
         validate_coords(lat, long)
     except ValueError as e:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Invalid coordinates. {e}"
         )
 
@@ -58,9 +69,9 @@ async def find_closest_station(coords: Annotated[str, Query(description="Comma-s
     cached_response = await get_cached_response(cache_key)
     if cached_response:
         return JSONResponse(
-            status_code=200,
+            status_code=status.HTTP_200_OK,
             content={
-                "status": "OK",
+                "success": True,
                 "data": cached_response,
                 "detail": "Returned from cache."
             },
@@ -85,14 +96,29 @@ async def find_closest_station(coords: Annotated[str, Query(description="Comma-s
         
         # Return the GeoJSON in data
         return JSONResponse(
-            status_code=200,
+            status_code=status.HTTP_200_OK,
             content={
-                "status": "OK",
+                "success": True,
                 "data": closest_station,
                 "detail": "Success"
             },
             headers={
                 "X-Cache": "MISS", 
+                "pid": str(pid)
+            }
+        )
+    except:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={
+                "success": False,
+                "error": {
+                    "code": status.HTTP_404_NOT_FOUND,
+                    "message": "Could not find a station nearest the provided location."
+                }
+                
+            },
+            headers={
                 "pid": str(pid)
             }
         )
