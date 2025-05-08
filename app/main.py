@@ -64,7 +64,10 @@ async def find_closest_station(coords: Annotated[str, Query(description="Comma-s
                 "data": cached_response,
                 "detail": "Returned from cache."
             },
-            headers={"X-Cache": "HIT", "pid": str(pid)}
+            headers={
+                "X-Cache": "HIT", 
+                "pid": str(pid)
+            }
         )
 
     # Acquire and use lock
@@ -88,7 +91,10 @@ async def find_closest_station(coords: Annotated[str, Query(description="Comma-s
                 "data": closest_station,
                 "detail": "Success"
             },
-            headers={"X-Cache": "MISS",  "pid": str(pid)}
+            headers={
+                "X-Cache": "MISS", 
+                "pid": str(pid)
+            }
         )
     finally:
         await lock.release()
