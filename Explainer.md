@@ -24,7 +24,7 @@ This is a little more overhead in terms of set up (and cost) but it provided a m
 
 To me, this meant avoid extraneous calls, or calculations if we can. I leveraged my Redis instance for caching. So, when a set of coords is sent, the result is cached in Redis for a time. The benefit is that if any user now searches for that coordinate, we can just spit back an already calculated response from Redis. Using a read-through approach here because charging a user for a request, but not doing much effort on our end can maximize revenue. Further, when/if we utilize a 3rd party for directions (like Google's Routes API, say) we can cut down on costs by caching directions results in Redis.
 
-### 5. Reurn sensible responses
+### 5. Return sensible responses
 
 This is a multi-part approach, of which I did not implement everything at the moment. Why? Because this is a proof-of-concept, and our dataset/user-base is probably very limited at the moment. 
 
@@ -52,7 +52,7 @@ Here, I'd track stuff like request throughput, errors (client and server side), 
 
 ## System Overview
 
-### Current Overview
+### Current Design Overview
 
 The below design shows the details for one (1) instance of our app in the interest of readability. But, this is the set up for all three (3) instances spun up via Docker.
 
