@@ -1,4 +1,4 @@
-# Thoughts and Resoning 
+# Thoughts and Reasoning 
 
 ### The following responses correspond to the items from the requirements document:
 https://docs.google.com/document/d/1jbSNcx2fDihQsGnQcHbtjEr5SHmM_Bk53Qu9BmgGFDE/edit?tab=t.0
@@ -54,13 +54,13 @@ Here, I'd track stuff like request throughput, errors (client and server side), 
 
 ### Current Overview
 
-The below design shows the details for one intance in interest of readability. But, this is the set up for all three instances spun up via Docker.
+The below design shows the details for one (1) instance of our app in the interest of readability. But, this is the set up for all three (3) instances spun up via Docker.
 
 ![alt text](Current_Design.png)
 
 ### Nearest Station Service Detailed View
 
-Below is a more detailed view of the "insides" of the "Nearest Service" which is what I'm calling the Gunicorn instance running various FastAPI instances via uvicorn. Each of these will hit the cache/lock and their isloated `stations` data on a cache miss.
+Below is a more detailed view of the "insides" of the `Nearest Station Service` which is what I'm calling the Gunicorn instance running various FastAPI instances via uvicorn. Each of these will hit the cache/lock, or their isloated `stations` data on a cache miss.
 
 ![alt text](Nearest_Service_Details.png)
 
@@ -69,7 +69,9 @@ Below is a more detailed view of the "insides" of the "Nearest Service" which is
 
 Some ideas that came to me for future enhancements, other than those I've mentioned, are as follows:
 
-- A client application (React-based using something like Vite?) that enables a user to enter coordinates, or an address, and sends the request to our Nearest Servcie via our endpoint when the user submits. This would require some client-side logic to convert address to coords, or an update to the endpoint to accept an adresss and convert on the server side. Regardless, the result would be diaplyed on a map in the UI, and the user could be presented with the option to get directions. I'd call a 3rd party endpoint here, like Google Routes API, and cache the results. 
+- Testing!! We need some tests in here. Utilize pytest to check functions and appropriate responses. 
+
+- A client application (React-based using something like Vite?) that enables a user to enter coordinates, or an address, and sends the request to our Nearest Station Service via our endpoint when the user submits. This would require some client-side logic to convert address to coords, or an update to the endpoint to accept an adress and convert on the server side. Regardless, the result would be diaplyed on a map in the UI, and the user could be presented with the option to get directions. I'd call a 3rd party endpoint here, like Google Routes API, and cache the results. 
 
 - I'm not in love with the data structure. What would be great is establishing a central data store from which our service could read. I'm thinking about using MongoDB, which would allow for GeoJSON to be stored, and we could use some geospatial queries to return the nearest station. This would remove the KMZ -> list transformation.
 

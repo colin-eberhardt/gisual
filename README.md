@@ -71,9 +71,3 @@ GET `/station/`
         }
     }
 ```
-
-# Testing
-
-
-
-# Future Enhancements
