@@ -8,7 +8,7 @@ EARTH_CIR = 6371000
 def haversine_distance(point: tuple) -> dict:
     """
         Calculates the closest distance between a given point and SEPTA stations using the Haversine formaula. 
-        Resource; https://en.wikipedia.org/wiki/Haversine_formula
+        Resource: https://en.wikipedia.org/wiki/Haversine_formula
 
         Parameters:
         -------------
