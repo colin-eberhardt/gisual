@@ -1,7 +1,7 @@
 services:
   api:
     build:
-      context: ./app
+      context: .
       dockerfile: Dockerfile
     deploy:
       replicas: 3

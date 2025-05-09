@@ -18,6 +18,7 @@ from app.utils.helpers import validate_coords
 async def lifespan(app: FastAPI):
     # Create the stations dictionary once at startup
     global stations
+    # Can be more flexible with some config and env vars
     kml_path = extract_kml_file("./data/stations.kmz")
     stations.SEPTA_STATIONS = convert_kml(kml_path) 
 
@@ -31,7 +32,7 @@ async def lifespan(app: FastAPI):
             detail="Unexpected server error. Please try again later."
         )
     finally:
-        redis_conn.close()
+        await redis_conn.close()
 
 app = FastAPI(lifespan=lifespan)
 

@@ -6,9 +6,9 @@ COPY  ./requirements.txt /app/requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
-COPY . ./app
+COPY ./app ./app
 
-COPY data/SEPTARegionalRailStations2016.kmz data/stations.kmz
+COPY /app/data/SEPTARegionalRailStations2016.kmz data/stations.kmz
 
 ENV PYTHONPATH=/app
 

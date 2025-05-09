@@ -34,8 +34,9 @@ Further, there are two functions within `transform.py` which are executed when t
 2. `cd` into the `gisual` folder on your machine
 3. Run `docker compose build`, if running this for the first time.
 4. Run `docker compose up -d`
+5. When you're down shut it down `docker compose down -v`
 
-Nice, your app should be available at `http://localhost:8000`
+Nice, your app should be available at `http://localhost/`
 
 # Usage
 
@@ -48,7 +49,7 @@ GET `/station/`
 **Example**
 
 ```
-    GET /station/?coords=40, -75
+    http://localhost/station/?coords=40, -75
 ```
 
 **Response**

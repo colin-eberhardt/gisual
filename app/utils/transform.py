@@ -22,6 +22,7 @@ def extract_kml_file(kmz_path:str) -> str:
         for file in kmz_file.namelist():
             content = kmz_file.read(file)
 
+            # Can be more flexible with some config and env vars
             output_path = f'./data/{file}'
             with open(output_path, 'wb') as kml_file:
                 kml_file.write(content)
