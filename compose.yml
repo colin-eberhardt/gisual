@@ -13,7 +13,7 @@ services:
       - "8000"
     depends_on:
       - redis
-    # restart: unless-stopped
+    restart: unless-stopped
     
     
   redis:
